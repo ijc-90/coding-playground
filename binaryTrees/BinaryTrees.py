@@ -195,8 +195,20 @@ class BTree:
     def breadthTraverse(self, function):
         if self.root is None:
             return
-        #else:
-        #    self.root.breadthTraverse(function, [])
+        nodesInThisLevel = [self.root]
+
+        while ( len(nodesInThisLevel) > 0 ):
+            nodesInNextLevel = []
+
+            #print ( list (map ( lambda x:x.value ,nodesInThisLevel) ) )
+            for node in nodesInThisLevel:
+                function(node.value)
+                if node.left is not None:
+                    nodesInNextLevel.append(node.left)
+                if node.right is not None:
+                    nodesInNextLevel.append(node.right)
+
+            nodesInThisLevel = nodesInNextLevel
 
     def hasPathSum(self,value):
         if self.root is None:
@@ -235,11 +247,11 @@ tree.insert(7)
 #print(tree.countNodes())
 #print (tree.maxDepth())
 #print (tree.minValue())
-list = []
+lista = []
 #tree.postOrder(print)
-#tree.inOrder(lambda x: list.append(x))
+#tree.inOrder(lambda x: lista.append(x))
 
-#print (list)
+#print (lista)
 
 
 otherTree = BTree()
@@ -272,7 +284,7 @@ notBTree.root.right.right.right = BNode(1)
 #print(notBTree.hasPathSum(27))
 #print(notBTree.hasPathSum(20))
 
-notBTree.printPaths()
+#notBTree.printPaths()
 
 
 duplicatedTree = BTree()
@@ -285,3 +297,4 @@ duplicatedTree.insert(0)
 duplicatedTree.insert(9)
 duplicatedTree.insert(8)
 duplicatedTree.duplicate()
+duplicatedTree.breadthTraverse(print)
