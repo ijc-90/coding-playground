@@ -136,13 +136,69 @@ class BNode:
             self.left.mirror()
         if self.right is not None:
             self.right.mirror()
+            
+            
+    def sameTree(self, otherNode):
+        lefSideEquals = False
+        rightSideEquals = False
+        if otherNode is None:
+            return False
+        if self.value != otherNode.value:
+            return False
+        if self.left is None:
+            if otherNode.left is not None:
+                return False
+            else:
+                lefSideEquals = True
+        else:
+            lefSideEquals = self.left.sameTree(otherNode.left)
+            if not lefSideEquals:
+                return False
+        
+        if self.right is None:
+            if otherNode.right is not None:
+                return False
+            else:
+                rightSideEquals = True
+        else:
+            rightSideEquals = self.right.sameTree(otherNode.right)
+        return (lefSideEquals and rightSideEquals)
 
 
+    def isBST(self, minValue, maxValue):
+        ##leftPart
+        if (maxValue is not None and self.value > maxValue) or (minValue is not None and self.value <= minValue):
+            return False
 
+        leftPart = False
+        if self.left is None:
+            leftPart = True
+        else:
+            if maxValue is None:
+                leftPart = self.left.isBST(minValue, self.value)
+            else:
+                leftPart = self.left.isBST(minValue, min(maxValue,self.value))
 
+        if self.right is None:
+            rightPart = True
+        else:
+            if minValue is None:
+                rightPart = self.right.isBST(self.value, maxValue)
+            else:
+                rightPart = self.right.isBST(min(minValue, self.value), maxValue)
 
+        return leftPart and rightPart
 
-
+    def findParentOfValue(self, value, parent=None):
+        if self.value == value:
+            return parent
+        if value <= self.value:
+            if self.left is not None:
+                return self.left.findParentOfValue(value, self.value)
+        else:
+            if self.right is not None:
+                return self.right.findParentOfValue(value, self.value)
+        return None
 
 class BTree:
     root = None
@@ -229,6 +285,24 @@ class BTree:
         if self.root is None:
             return
         self.root.duplicate()
+    
+    def sameTree(self, otherTree):
+        if self.root is None and otherTree.root is None:
+            return True
+        if self.root is not None:
+            return self.root.sameTree(otherTree.root)
+        else:
+            return False
+
+    def isBST(self):
+        if self.root is None:
+            return True
+        else:
+            return self.root.isBST(None,None)
+
+    def findParentOfValue(self, valueToSearch):
+        return self.root.findParentOfValue(valueToSearch, None)
+        
 
 
 
@@ -278,6 +352,8 @@ notBTree.root.right.left = BNode(13)
 notBTree.root.right.right = BNode(4)
 notBTree.root.right.right.right = BNode(1)
 
+#print(notBTree.isBST())
+
 #print(notBTree.hasPathSum(18))
 #print(notBTree.hasPathSum(22))
 #print(notBTree.hasPathSum(26))
@@ -292,9 +368,54 @@ duplicatedTree.insert(4)
 duplicatedTree.insert(3)
 duplicatedTree.insert(5)
 duplicatedTree.insert(2)
-duplicatedTree.insert(3.5)
 duplicatedTree.insert(0)
 duplicatedTree.insert(9)
 duplicatedTree.insert(8)
+#print(duplicatedTree.isBST())
 duplicatedTree.duplicate()
-duplicatedTree.breadthTraverse(print)
+#print(duplicatedTree.isBST())
+#duplicatedTree.breadthTraverse(print)
+
+
+
+oneTree = BTree()
+oneTree.insert(4)
+oneTree.insert(3)
+oneTree.insert(5)
+oneTree.insert(2)
+oneTree.insert(0)
+oneTree.insert(9)
+oneTree.insert(8)
+
+otherTree = BTree()
+otherTree.insert(4)
+otherTree.insert(3)
+otherTree.insert(5)
+otherTree.insert(2)
+otherTree.insert(0)
+otherTree.insert(9)
+#print(oneTree.sameTree(otherTree))
+#print(oneTree.sameTree(oneTree))
+otherTree.insert(8)
+#print(oneTree.sameTree(otherTree))
+otherTree.insert(10)
+#print(oneTree.sameTree(otherTree))
+
+
+def countTrees(numberOfValues):
+    if numberOfValues <= 1:
+        return 1
+    sum = 0
+    for i in range(1,numberOfValues+1):
+        left = countTrees(i-1)
+        right = countTrees(numberOfValues-i)
+        sum += left*right
+    return sum
+
+
+#print(countTrees(15))
+
+
+
+
+#print(tree.findParentOfValue(0))
